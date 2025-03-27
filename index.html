@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Enjeux de la DATA en 2025</title>
+    <script src="https://cdn.jsdelivr.net/npm/react@17.0.2/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@17.0.2/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6/babel.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .quiz-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .option {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .option:hover {
+            background-color: #f0f0f0;
+        }
+        .correct {
+            background-color: #e6f3e6;
+            border-color: green;
+        }
+        .incorrect {
+            background-color: #f3e6e6;
+            border-color: red;
+        }
+        .explanation {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+    const QuizApp = () => {
+        const [currentQuestion, setCurrentQuestion] = React.useState(0);
+        const [showScore, setShowScore] = React.useState(false);
+        const [score, setScore] = React.useState(0);
+        const [selectedAnswer, setSelectedAnswer] = React.useState(null);
+
+        const questions = [
+            {
+                text: "Que signifie l'acronyme RGPD ?",
+                options: [
+                    { text: "Réseau Global de Partage de Données", correct: false },
+                    { text: "Règlement Général sur la Protection des Données", correct: true },
+                    { text: "Référentiel de Gestion des Processus Digitaux", correct: false }
+                ],
+                explanation: "Le RGPD est un règlement européen qui définit les règles de protection des données personnelles."
+            },
+            {
+                text: "Quel est le principal défi de la gestion des données en 2025 ?",
+                options: [
+                    { text: "Le volume des données", correct: false },
+                    { text: "La sécurisation et la protection", correct: true },
+                    { text: "Le coût du stockage", correct: false }
+                ],
+                explanation: "La sécurisation des données devient cruciale avec l'augmentation des cybermenaces et des réglementations."
+            },
+            {
+                text: "Quelle entreprise française est un leader en solutions de cybersécurité ?",
+                options: [
+                    { text: "Orange", correct: false },
+                    { text: "Thales", correct: true },
+                    { text: "Carrefour", correct: false }
+                ],
+                explanation: "Thales est reconnue mondialement pour ses solutions avancées de cybersécurité et de protection des données."
+            },
+            {
+                text: "Qu'est-ce que l'IoT (Internet des Objets) apporte à la collecte de données ?",
+                options: [
+                    { text: "Aucune source de données supplémentaire", correct: false },
+                    { text: "Des capteurs et des appareils connectés générant des données en temps réel", correct: true },
+                    { text: "Une limitation de la collecte de données", correct: false }
+                ],
+                explanation: "L'IoT permet de collecter des données en temps réel à partir de multiples appareils connectés."
+            },
+            {
+                text: "Quel est le rôle principal de la CNIL ?",
+                options: [
+                    { text: "Promouvoir l'utilisation des données", correct: false },
+                    { text: "Protéger les données personnelles et garantir leur bon usage", correct: true },
+                    { text: "Développer de nouvelles technologies de données", correct: false }
+                ],
+                explanation: "La CNIL veille à ce que l'informatique soit au service du citoyen et qu'elle ne porte pas atteinte aux droits humains."
+            },
+            {
+                text: "Qu'est-ce que le 'data sharing' ?",
+                options: [
+                    { text: "Le partage illimité de toutes les données", correct: false },
+                    { text: "L'échange de données entre entreprises selon des règles définies", correct: true },
+                    { text: "L'interdiction de partager des données", correct: false }
+                ],
+                explanation: "Le data sharing permet le partage contrôlé et sécurisé de données entre différentes organisations."
+            },
+            {
+                text: "Quel est l'impact du Big Data sur le marketing ?",
+                options: [
+                    { text: "Aucun impact significatif", correct: false },
+                    { text: "Personnalisation précise des offres et des campagnes", correct: true },
+                    { text: "Réduction des budgets marketing", correct: false }
+                ],
+                explanation: "Le Big Data permet une personnalisation très fine des stratégies marketing grâce à l'analyse des données."
+            },
+            {
+                text: "Qu'est-ce que la data anonymisation ?",
+                options: [
+                    { text: "La suppression complète des données", correct: false },
+                    { text: "Le processus de rendre des données personnelles non identifiables", correct: true },
+                    { text: "L'archivage des données personnelles", correct: false }
+                ],
+                explanation: "L'anonymisation permet de protéger la vie privée en rendant impossible l'identification des individus à partir des données."
+            },
+            {
+                text: "Quel est le principal défi éthique lié à l'utilisation des données ?",
+                options: [
+                    { text: "Le coût du stockage", correct: false },
+                    { text: "Le respect de la vie privée et du consentement", correct: true },
+                    { text: "La vitesse de traitement des données", correct: false }
+                ],
+                explanation: "L'éthique des données implique de respecter la vie privée, d'obtenir un consentement éclairé et de protéger les droits individuels."
+            },
+            {
+                text: "Qu'est-ce que le 'machine learning' apporte à l'analyse des données ?",
+                options: [
+                    { text: "Une analyse manuelle traditionnelle", correct: false },
+                    { text: "Des algorithmes capables d'apprendre et de s'améliorer automatiquement", correct: true },
+                    { text: "Une réduction de la capacité d'analyse", correct: false }
+                ],
+                explanation: "Le machine learning permet des analyses de données de plus en plus précises et sophistiquées grâce à l'apprentissage automatique."
+            }
+        ];
+
+        const handleAnswerClick = (option) => {
+            setSelectedAnswer(option);
+            
+            if (option.correct) {
+                setScore(score + 1);
+            }
+
+            setTimeout(() => {
+                const nextQuestion = currentQuestion + 1;
+                if (nextQuestion < questions.length) {
+                    setCurrentQuestion(nextQuestion);
+                    setSelectedAnswer(null);
+                } else {
+                    setShowScore(true);
+                }
+            }, 2000);
+        };
+
+        const resetQuiz = () => {
+            setCurrentQuestion(0);
+            setShowScore(false);
+            setScore(0);
+            setSelectedAnswer(null);
+        };
+
+        return (
+            <div className="quiz-container">
+                {showScore ? (
+                    <div>
+                        <h2>Votre score : {score} / {questions.length}</h2>
+                        <p>Vous avez obtenu {((score / questions.length) * 100).toFixed(0)}%</p>
+                        <button onClick={resetQuiz}>Recommencer le quiz</button>
+                    </div>
+                ) : (
+                    <div>
+                        <h2>Question {currentQuestion + 1}</h2>
+                        <div className="question">
+                            <p>{questions[currentQuestion].text}</p>
+                            {questions[currentQuestion].options.map((option, index) => (
+                                <div 
+                                    key={index} 
+                                    className={`option 
+                                        ${selectedAnswer === option && option.correct ? 'correct' : ''}
+                                        ${selectedAnswer === option && !option.correct ? 'incorrect' : ''}
+                                    `}
+                                    onClick={() => handleAnswerClick(option)}
+                                >
+                                    {option.text}
+                                </div>
+                            ))}
+                            {selectedAnswer && (
+                                <div className="explanation">
+                                    {questions[currentQuestion].explanation}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    ReactDOM.render(<QuizApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
